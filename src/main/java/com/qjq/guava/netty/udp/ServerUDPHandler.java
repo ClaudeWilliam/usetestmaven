@@ -5,6 +5,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 
+import java.net.InetSocketAddress;
+
 public class ServerUDPHandler extends ChannelHandlerAdapter {
 
     //读取数据进行编解码
@@ -13,6 +15,8 @@ public class ServerUDPHandler extends ChannelHandlerAdapter {
         DatagramPacket packet = (DatagramPacket) msg;
         String req = packet.content().toString(CharsetUtil.UTF_8);//上面说了，通过content()来获取消息内容
         System.out.println(req);
+        //打印客户端的IP和地址 UDP
+//        printClientAdress(ctx);
     }
 
     //发生异常后的处理
@@ -32,5 +36,15 @@ public class ServerUDPHandler extends ChannelHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("netty 失去连接");
+    }
+
+    /**
+     * 打印客户端相关的IP地址,UDP打印IP地址错误
+     */
+    private void printClientAdress(ChannelHandlerContext ctx){
+        InetSocketAddress inSocket = (InetSocketAddress) ctx.channel().remoteAddress();
+        String clientIP = inSocket.getAddress().getHostName();
+        System.out.println("clientIP:"+clientIP);
+        System.out.println(inSocket.getPort());
     }
 }

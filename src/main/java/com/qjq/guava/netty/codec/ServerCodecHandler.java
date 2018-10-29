@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 
+import java.net.InetSocketAddress;
 import java.util.Date;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ public class ServerCodecHandler extends ChannelHandlerAdapter {
         try {
             Request request= (Request) msg;
             System.out.println("request from client Host:"+request.getHost()+"-id:"+request.getRequestId()+"-message:"+request.getMessage());
+            printClientAdress(ctx);//打印客户端IP地址
             Response response=new Response();
             response.setTime(new Date());
             response.setResponseId(UUID.randomUUID().toString());
@@ -32,5 +34,14 @@ public class ServerCodecHandler extends ChannelHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
         ctx.close();
+    }
+    /**
+     * 打印客户端相关的IP地址
+     */
+    private void printClientAdress(ChannelHandlerContext ctx){
+        InetSocketAddress inSocket = (InetSocketAddress) ctx.channel().remoteAddress();
+        String clientIP = inSocket.getAddress().getHostName();
+        System.out.println("clientIP:"+clientIP);
+        System.out.println(inSocket.getPort());
     }
 }

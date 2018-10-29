@@ -19,6 +19,7 @@ public class ClientCodec {
                 .channel(NioSocketChannel.class) //指定管道类型
                 .handler(new LoggingHandler(LogLevel.INFO))
                 .handler(new ClientCodecInit());
+//        b.bind(5678).sync(); 客户端无法绑定IP地址
         ChannelFuture cf = b.connect("127.0.0.1", 8765).sync(); //连接指定的服务器地址，这里是之前我们的设置的
 
         cf.channel().closeFuture().sync();//主线程阻塞到这里，直至关闭，第一个链接

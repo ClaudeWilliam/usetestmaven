@@ -15,7 +15,6 @@ public class UDPServer {
                 .handler(new LoggingHandler(LogLevel.INFO)) //打印输出和初始化日志，这里是INFO级别的日志
                 .channel(NioDatagramChannel.class)//UDP的类型Channel
                 .option(ChannelOption.SO_BROADCAST, true) //设置Channel的属性，这里使用的是广播的机制
-                .option(ChannelOption.SO_BACKLOG, 128)
                 .option(ChannelOption.SO_RCVBUF, 1024 * 1024)// 设置UDP读缓冲区为1M
                 .option(ChannelOption.SO_SNDBUF, 1024 * 1024)// 设置UDP写缓冲区为1
                 .handler(new ServerUDPInit());
