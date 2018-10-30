@@ -6,6 +6,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+
+import java.util.concurrent.TimeUnit;
 
 public class UDPServer {
     public static void main(String[] args) throws InterruptedException {
@@ -16,11 +19,11 @@ public class UDPServer {
                 .channel(NioDatagramChannel.class)//UDP的类型Channel
                 .option(ChannelOption.SO_BROADCAST, true) //设置Channel的属性，这里使用的是广播的机制
                 .option(ChannelOption.SO_RCVBUF, 1024 * 1024)// 设置UDP读缓冲区为1M
-                .option(ChannelOption.SO_SNDBUF, 1024 * 1024)// 设置UDP写缓冲区为1
+                .option(ChannelOption.SO_SNDBUF, 1024 * 1024)// 设置UDP写缓冲区为1M
                 .handler(new ServerUDPInit());
         ChannelFuture cf = bootstrap.bind(1234).sync();//绑定接口
 
-        cf.channel().closeFuture().await(); //TCP使用的是sync()，同步的等待
+        cf.channel().closeFuture().sync();
         System.out.println("server connect1 close");
         group.shutdownGracefully(); //关闭parent线程组，资源释放
     }
@@ -33,6 +36,8 @@ public class UDPServer {
         protected void initChannel(Channel ch) throws Exception {
             //增加对数据的编解码工作，UDP和处理之后的操作
             ch.pipeline().addLast(new ServerUDPHandler());
+            //设置读取超时时间。超时后断开，5S
+            ch.pipeline().addLast(new ReadTimeoutHandler(5,TimeUnit.SECONDS));
         }
     }
 }
