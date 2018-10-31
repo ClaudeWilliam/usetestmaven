@@ -6,9 +6,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-
-import java.util.concurrent.TimeUnit;
 
 public class UDPServer {
     public static void main(String[] args) throws InterruptedException {
@@ -36,8 +33,8 @@ public class UDPServer {
         protected void initChannel(Channel ch) throws Exception {
             //增加对数据的编解码工作，UDP和处理之后的操作
             ch.pipeline().addLast(new ServerUDPHandler());
-            //设置读取超时时间。超时后断开，5S
-            ch.pipeline().addLast(new ReadTimeoutHandler(5,TimeUnit.SECONDS));
+            //设置空闲时间。超时后断开，10S UDP不生效
+//            ch.pipeline().addLast(new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS));
         }
     }
 }
