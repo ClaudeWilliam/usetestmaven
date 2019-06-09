@@ -129,6 +129,7 @@ public class LamadaTestClient {
         List<Integer> list = IntStream.range(0, 100).boxed().collect(Collectors.toList());
         List filters = list.stream().parallel().filter((x) -> x % 2 == 0).collect(Collectors.toList());
         System.out.println(filters);
+
     }
 
     @Test
@@ -194,6 +195,11 @@ public class LamadaTestClient {
     @Test
     public void testOptional() {
         System.out.println(Optional.empty());
+    }
+
+    @Test
+    public  void  testFunctionInterface(){
+
     }
 
 }
