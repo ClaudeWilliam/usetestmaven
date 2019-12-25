@@ -1,5 +1,7 @@
 package com.qjq.redpackage;
 
+import com.google.common.collect.Lists;
+
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,14 @@ public class RedPackageClient {
            accountMap.put(i,accounts);
         }
 
+        File file = new File("d:/red/");
+        // get the folder list
+        File[] array = file.listFiles();
+        List<String> fileNames = Lists.newArrayList();
+        for (int i = 0; i < array.length; i++) {
+            fileNames.add(array[i].getName());
+        }
+//        fileNames.parallelStream().forEach();
         List<RedPackage> packageList = fileUtils.getRedPackage("d:/redPackage.txt");
 
         RedPackageManager redPackageManager =new RedPackageManager();
