@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class RedPackageClient {
 
@@ -14,10 +15,9 @@ public class RedPackageClient {
         RedPackageFileUitils fileUtils = new RedPackageFileUitils();
 
         //存储所有账户信息
-        Map<Integer,List<Account>> accountMap = new ConcurrentHashMap<>();
+        Map<Long,AtomicLong> accountMap = new ConcurrentHashMap<>(2000*10000);
         for(int i=0;i<100;i++){
-           List<Account>  accounts = fileUtils.getAccount("d:/account"+i+".txt");
-           accountMap.put(i,accounts);
+            accountMap.putAll(fileUtils.getAccount("d:/account"+i+".txt"));
         }
 
         File file = new File("d:/red/");
@@ -27,22 +27,21 @@ public class RedPackageClient {
         for (int i = 0; i < array.length; i++) {
             fileNames.add(array[i].getName());
         }
-//        fileNames.parallelStream().forEach();
-        List<RedPackage> packageList = fileUtils.getRedPackage("d:/redPackage.txt");
+        ExecutorService pool = Executors.newFixedThreadPool(100);
+        fileNames.parallelStream().forEach(d->{
+            List<RedPackage> packageList = fileUtils.getRedPackage(d);
+            RedPackageManager redPackageManager =new RedPackageManager();
+            Map<Long,Long> redData = redPackageManager.dealRepeatPackage(packageList);
+            RedPackageJob  job = new RedPackageJob();
+            job.setRedPackageMap(redData);
+            job.setAccountMap(accountMap);
+            CompletableFuture<Map<Long, AtomicLong>> future =CompletableFuture.supplyAsync(job,pool);
+        });
 
-        RedPackageManager redPackageManager =new RedPackageManager();
-        Map<Long,Long> redData = redPackageManager.dealRepeatPackage(packageList);
 
 
-        ExecutorService pool = Executors.newFixedThreadPool(20);
 
-        RedPackageJob  job = new RedPackageJob();
-//        job.setAccountMap(accountData);
-        job.setRedPackageMap(redData);
-        CompletableFuture<Map<Long,Long>> future =CompletableFuture.supplyAsync(job,pool);
-
-//        pool.submit(job);
-//        TimeUnit.SECONDS.sleep(1L);
-        System.out.println(future.toCompletableFuture());
+        TimeUnit.SECONDS.sleep(1L);
+//        System.out.println(future.toCompletableFuture());
     }
 }

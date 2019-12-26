@@ -1,5 +1,7 @@
 package com.qjq.redpackage;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class Account {
     /**
      *  id
@@ -8,10 +10,9 @@ public class Account {
     /**
      * 金额
      */
-    private Long amount;
+    private AtomicLong amount;
 
-
-    public Account(Long id, Long amount) {
+    public Account(Long id, AtomicLong amount) {
         this.id = id;
         this.amount = amount;
     }
@@ -24,11 +25,11 @@ public class Account {
         this.id = id;
     }
 
-    public Long getAmount() {
+    public AtomicLong getAmount() {
         return amount;
     }
 
-    public void setAmount(Long amount) {
+    public void setAmount(AtomicLong amount) {
         this.amount = amount;
     }
 }

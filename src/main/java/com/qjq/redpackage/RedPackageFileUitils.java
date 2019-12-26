@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class RedPackageFileUitils {
 
@@ -36,11 +37,11 @@ public class RedPackageFileUitils {
      * @param fileName
      * @return
      */
-    List<Account> getAccount(String fileName){
-        List<Account> data =  Lists.newArrayList();
+    Map<Long,AtomicLong> getAccount(String fileName){
+        Map<Long,AtomicLong> data = Maps.newConcurrentMap();
         BigFileReader.Builder builder = new BigFileReader.Builder(fileName, line -> {
             String[] str = line.split("\\s+");
-            data.add(new Account(Long.valueOf(str[0]),Long.valueOf(str[1])));
+            data.put(Long.valueOf(str[0]),new AtomicLong(Long.valueOf(str[1])));
         });
         builder.withTreahdSize(10)
                 .withCharset("UTF-8")
